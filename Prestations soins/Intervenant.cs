@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace soins
+namespace Soins2021
 {
     class Intervenant
     {
         private string nom;
         private string prenom;
-        private List<Prestation> listePrestations;
+        private List<Prestation> listePrestations = new List<Prestation>();
 
         public Intervenant(string nom, string prenom)
         {
@@ -23,6 +23,15 @@ namespace soins
             listePrestations.Add(new Prestation(libelle, dateHeureSoin));
         }
 
+        public int GetNbPrestations()
+        {
+            return listePrestations.Count;
+        }
+
+        public override string ToString()
+        {
+            return this.nom + "- " + this.prenom;
+        }
         public string Nom { get => nom;  }
         public string Prenom { get => prenom;  }
     }

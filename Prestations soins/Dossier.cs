@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace soins
+namespace Soins2021
 {
     class Dossier
     {
@@ -12,27 +12,73 @@ namespace soins
         private string prenom;
         private DateTime dateNaissance;
         private List<Prestation> listePrestations;
+        private DateTime dateCreation;
 
         public Dossier(string nom, string prenom, DateTime dateNaissance)
         {
             this.nom = nom;
             this.prenom = prenom;
-            this.dateNaissance = dateNaissance;
+            if (dateNaissance.Date.CompareTo(DateTime.Now.Date) <=0)
+            {
+                this.dateNaissance = dateNaissance;
+            }
+            else
+            {
+                throw new SoinsException("La date de naissance ne peut pas être supérieure à la dta du jour");
+            }
+            listePrestations = new List<Prestation>();
+            //dateCreation = DateTime.Now;
+            dateCreation = new DateTime(1990, 12, 25);
+        }
+        public Dossier(string nom, string prenom, DateTime dateNaissance, DateTime dateCreation) : this(nom,prenom,dateNaissance)
+        {
+            if (dateCreation.Date.CompareTo(DateTime.Now.Date)<=0)
+            {
+                this.dateCreation = dateCreation;
+            }
+            else
+            {
+                throw new SoinsException("Date de création non valide");
+            }
         }
 
-        public Dossier(string nom, string prenom, DateTime dateNaissance, Prestation prestation) : this(nom, prenom, dateNaissance)
+        public Dossier(string nom, string prenom, DateTime dateNaissance, DateTime dateCreation, Prestation prestation) : this(nom, prenom, dateNaissance)
         {
+            if (dateCreation.Date.CompareTo(DateTime.Now.Date) <= 0)
+            {
+                this.dateCreation = dateCreation;
+            }
+            else
+            {
+                throw new SoinsException("Date de création non valide");
+            }
             AjoutePrestation(prestation);
         }
 
-        public Dossier(string nom, string prenom, DateTime dateNaissance, List<Prestation> listePrestations) : this(nom, prenom, dateNaissance)
+        public Dossier(string nom, string prenom, DateTime dateNaissance, DateTime dateCreation, List<Prestation> listePrestations) : this(nom, prenom, dateNaissance)
         {
+            if (dateCreation.Date.CompareTo(DateTime.Now.Date) <= 0)
+            {
+                this.dateCreation = dateCreation;
+            }
+            else
+            {
+                throw new SoinsException("Date de création non valide");
+            }
             this.listePrestations = listePrestations;
         }
 
         public void AjoutePrestation(Prestation p)
         {
-            listePrestations.Add(p);
+            if (p.DateHeureSoin.Date.CompareTo(this.DateCreation.Date)>= 0)
+            {
+                listePrestations.Add(p);
+            }
+            else
+            {
+                throw new SoinsException("La date de prestation doit être postérieure à la date de création du dossier");
+            }
+            
         }
         
         public int GetNbPrestationsExternes()
@@ -98,8 +144,26 @@ namespace soins
             }
             return cpt;
         }
+
+        public static bool IsDateTime(string txtDate)
+        {
+            DateTime format;
+            return DateTime.TryParse(txtDate, out format);
+        }
+        public override string ToString()
+        {
+            Console.WriteLine("-----Début Dossier--------------");
+            string s = "\n Nom : " + this.Nom + " Prenom : " + this.Prenom + " Date de naissance : " + this.DateNaissance;
+
+            foreach (Prestation prestation in listePrestations)
+            {
+                s += prestation;
+            }
+            return s;
+        }
         public string Nom { get => nom; }
         public string Prenom { get => prenom;  }
         public DateTime DateNaissance { get => dateNaissance;  }
+        public DateTime DateCreation { get => dateCreation; }
     }
 }
